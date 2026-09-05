@@ -240,21 +240,20 @@
 
   /* ── PONER / QUITAR SIGNO MENOS ── */
   function ponerMenos() {
+  const inp = inputActivo;
 
-    const inp = inputActivo;
+  if (!inp || inp.disabled) return;
 
-    if (!inp || inp.disabled) return;
+  let valor = inp.value;
 
-    let valor = inp.value;
-
-    if (valor.startsWith('-')) {
-      inp.value = valor.substring(1);
-    } else {
-      inp.value = '-' + valor;
-    }
-
-    inp.focus();
+  if (valor.startsWith('-')) {
+    inp.value = valor.substring(1);
+  } else {
+    inp.value = '-' + valor;
   }
+
+  inp.focus();
+}
 
   /* ── GENERAR NUEVO EJERCICIO ── */
   function nuevo() {
@@ -345,41 +344,37 @@
         inputActivo = inp;
       });
 
-      inp.addEventListener('input', function() {
-        inputActivo = inp;
-        alEscribir(i);
-      });
+    inp.addEventListener('input', function() {
+  inputActivo = inp;
+});
 
       /* Enter / OK */
-      inp.addEventListener('keydown', function(evento) {
+  inp.addEventListener('keydown', function(evento) {
 
-        if (evento.key === 'Enter') {
+  if (evento.key === 'Enter') {
 
-          evento.preventDefault();
+    evento.preventDefault();
 
-          if (i === pasoActual) {
+    if (i === pasoActual) {
 
-            const valor = inp.value.trim();
+      const valor = inp.value.trim();
 
-            if (valor !== '') {
-              alEscribir(i);
-            }
+      if (valor !== '') {
+        alEscribir(i);
+      }
 
-            /* Si el paso quedó correcto, alEscribir
-               ya habilita el siguiente input */
-            if (pasoActual < window._pasos.length) {
+      if (pasoActual < window._pasos.length) {
 
-              const siguiente =
-                document.getElementById('inp-' + pasoActual);
+        const siguiente =
+          document.getElementById('inp-' + pasoActual);
 
-              if (siguiente && !siguiente.disabled) {
-                siguiente.focus();
-              }
-            }
-          }
+        if (siguiente && !siguiente.disabled) {
+          siguiente.focus();
         }
-      });
-
+      }
+    }
+  }
+});
       fila.appendChild(inp);
 
       const ico = document.createElement('span');
