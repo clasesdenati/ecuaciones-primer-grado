@@ -355,24 +355,29 @@
 
     evento.preventDefault();
 
-    if (i === pasoActual) {
+    if (i !== pasoActual) return;
 
-      const valor = inp.value.trim();
+    const valor = inp.value.trim();
 
-      if (valor !== '') {
-        alEscribir(i);
-      }
+    // Si está vacío, no hacemos nada
+    if (valor === '' || valor === '-') return;
 
+    // Validar
+    alEscribir(i);
+
+    // Si fue correcto, alEscribir habilita el siguiente
+    // y lo enfocamos
+    setTimeout(function() {
       if (pasoActual < window._pasos.length) {
-
         const siguiente =
           document.getElementById('inp-' + pasoActual);
 
         if (siguiente && !siguiente.disabled) {
           siguiente.focus();
+          inputActivo = siguiente;
         }
       }
-    }
+    }, 50);
   }
 });
       fila.appendChild(inp);
