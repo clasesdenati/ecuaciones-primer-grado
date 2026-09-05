@@ -4,8 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Despeje de Ecuaciones — @clasesdenati</title>
+
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
     body {
       font-family: Arial, sans-serif;
@@ -41,6 +46,7 @@
     }
 
     /* ── FILA SUPERIOR ── */
+
     .score-row {
       display: flex;
       justify-content: space-between;
@@ -50,9 +56,10 @@
       margin-bottom: 1.2rem;
     }
 
-    .score-row strong { color: #333; }
+    .score-row strong {
+      color: #333;
+    }
 
-    /* Ticks de ecuaciones resueltas */
     .estrellas {
       font-size: 18px;
       letter-spacing: 2px;
@@ -61,6 +68,7 @@
     }
 
     /* ── ENUNCIADO ── */
+
     .etiqueta {
       font-size: 13px;
       color: #888;
@@ -76,6 +84,7 @@
     }
 
     /* ── CADA PASO ── */
+
     .paso-wrap {
       margin-bottom: 10px;
     }
@@ -88,9 +97,12 @@
       color: #222;
     }
 
-    .paso span { white-space: nowrap; }
+    .paso span {
+      white-space: nowrap;
+    }
 
     /* ── INPUT ── */
+
     .inp {
       width: 58px;
       font-size: 18px;
@@ -119,17 +131,23 @@
       color: #e03e3e;
     }
 
-    /* Quitar flechas del input number */
-    input[type=number]::-webkit-inner-spin-button,
-    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
-    input[type=number] { -moz-appearance: textfield; }
-
     /* ── ÍCONO ✓ ✗ ── */
-    .icono { font-size: 16px; min-width: 16px; }
-    .icono.ok  { color: #2a9d5c; }
-    .icono.mal { color: #e03e3e; }
 
-    /* ── PISTA debajo del paso ── */
+    .icono {
+      font-size: 16px;
+      min-width: 16px;
+    }
+
+    .icono.ok {
+      color: #2a9d5c;
+    }
+
+    .icono.mal {
+      color: #e03e3e;
+    }
+
+    /* ── PISTA ── */
+
     .pista-inline {
       font-size: 12px;
       color: #e08c00;
@@ -139,6 +157,7 @@
     }
 
     /* ── BOTÓN MENOS ── */
+
     .btn-menos {
       display: block;
       margin: 8px auto 0;
@@ -160,8 +179,33 @@
     .btn-menos:active {
       background: #d5d5d5;
     }
-    
+
+    /* ── BOTÓN SIGUIENTE DEL INPUT ── */
+
+    .btn-avanzar {
+      display: block;
+      margin: 10px auto 0;
+      width: 130px;
+      height: 38px;
+      font-size: 14px;
+      font-weight: bold;
+      color: white;
+      background: #4a7eff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-avanzar:hover {
+      background: #2a5edd;
+    }
+
+    .btn-avanzar:active {
+      background: #244fc2;
+    }
+
     /* ── MENSAJE FINAL ── */
+
     .bravo {
       text-align: center;
       font-size: 15px;
@@ -171,7 +215,8 @@
       min-height: 20px;
     }
 
-    /* ── BOTÓN SIGUIENTE ── */
+    /* ── BOTÓN SIGUIENTE EJERCICIO ── */
+
     .btn-siguiente {
       width: 100%;
       padding: 12px;
@@ -185,29 +230,50 @@
       display: none;
     }
 
-    .btn-siguiente:hover { background: #2a5edd; }
+    .btn-siguiente:hover {
+      background: #2a5edd;
+    }
   </style>
 </head>
+
 <body>
 
 <div class="tarjeta">
-  <h1>Despeje de Ecuaciones</h1>
-  <p class="subtitulo">Grado 1 · @clasesdenati</p>
 
-  <!-- FILA SUPERIOR: ejercicio + ticks resueltos -->
+  <h1>Despeje de Ecuaciones</h1>
+
+  <p class="subtitulo">
+    Grado 1 · @clasesdenati
+  </p>
+
+  <!-- FILA SUPERIOR -->
+
   <div class="score-row">
-    <span>Ejercicio <strong id="num">1</strong></span>
+
+    <span>
+      Ejercicio <strong id="num">1</strong>
+    </span>
+
     <div class="estrellas" id="estrellas"></div>
+
   </div>
 
   <!-- CONSIGNA -->
-  <p class="etiqueta">Despejá x completando cada paso:</p>
-  <div class="ecuacion-display" id="ecuacion">—</div>
 
-  <!-- PASOS (se generan con JS) -->
+  <p class="etiqueta">
+    Despejá x completando cada paso:
+  </p>
+
+  <div class="ecuacion-display" id="ecuacion">
+    —
+  </div>
+
+  <!-- PASOS -->
+
   <div id="pasos"></div>
 
   <!-- BOTÓN MENOS -->
+
   <button
     type="button"
     class="btn-menos"
@@ -217,265 +283,691 @@
     −
   </button>
 
+  <!-- BOTÓN PARA AVANZAR -->
+
+  <button
+    type="button"
+    class="btn-avanzar"
+    id="btn-avanzar"
+    onclick="avanzarManual()"
+  >
+    Siguiente →
+  </button>
+
   <!-- FINAL -->
+
   <div class="bravo" id="bravo"></div>
-  <button class="btn-siguiente" id="btn-sig" onclick="nuevo()">Siguiente ejercicio</button>
+
+  <button
+    type="button"
+    class="btn-siguiente"
+    id="btn-sig"
+    onclick="nuevo()"
+  >
+    Siguiente ejercicio
+  </button>
+
 </div>
 
+
 <script>
-  /* ── VARIABLES GLOBALES ── */
+
+  /* ─────────────────────────────
+     VARIABLES GLOBALES
+  ───────────────────────────── */
+
   let a, b, c;
+
   let pasoActual   = 0;
   let intentosPaso = 0;
   let okCnt        = 0;
   let numEj        = 1;
 
-  /* ── NÚMERO ALEATORIO ── */
-  function rand(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-  }
-
-  /* ── INPUT ACTUAL ── */
   let inputActivo = null;
 
-  /* ── PONER / QUITAR SIGNO MENOS ── */
-  function ponerMenos() {
-  const inp = inputActivo;
 
-  if (!inp || inp.disabled) return;
+  /* ─────────────────────────────
+     NÚMERO ALEATORIO
+  ───────────────────────────── */
 
-  let valor = inp.value;
+  function rand(min, max) {
 
-  if (valor.startsWith('-')) {
-    inp.value = valor.substring(1);
-  } else {
-    inp.value = '-' + valor;
+    return Math.floor(
+      Math.random() * (max - min + 1)
+    ) + min;
+
   }
 
-  inp.focus();
-}
 
-  /* ── GENERAR NUEVO EJERCICIO ── */
+  /* ─────────────────────────────
+     PONER / QUITAR SIGNO MENOS
+  ───────────────────────────── */
+
+  function ponerMenos() {
+
+    const inp = inputActivo;
+
+    if (!inp || inp.disabled) return;
+
+    let valor = inp.value;
+
+    if (valor.startsWith('-')) {
+
+      inp.value = valor.substring(1);
+
+    } else {
+
+      inp.value = '-' + valor;
+
+    }
+
+    inp.focus();
+
+  }
+
+
+  /* ─────────────────────────────
+     AVANZAR CON EL BOTÓN
+  ───────────────────────────── */
+
+  function avanzarManual() {
+
+    const inp = inputActivo;
+
+    if (!inp || inp.disabled) return;
+
+    const valor = inp.value.trim();
+
+    /*
+      No hacer nada si está vacío
+      o solamente tiene el signo menos.
+    */
+
+    if (valor === '' || valor === '-') {
+
+      inp.focus();
+
+      return;
+
+    }
+
+    /*
+      Validar el paso actual.
+    */
+
+    alEscribir(pasoActual);
+
+  }
+
+
+  /* ─────────────────────────────
+     GENERAR NUEVO EJERCICIO
+  ───────────────────────────── */
+
   function nuevo() {
-    // Genera a, b, c con solución entera y a ≠ 0
+
+    /*
+      Genera a, b y c con solución entera
+      y a distinto de cero.
+    */
+
     do {
+
       a = rand(-5, 5);
       b = rand(-10, 10);
       c = rand(-10, 10);
-    } while (a === 0 || (c - b) % a !== 0);
+
+    } while (
+      a === 0 ||
+      (c - b) % a !== 0
+    );
+
 
     pasoActual   = 0;
     intentosPaso = 0;
     inputActivo  = null;
 
-    document.getElementById('num').textContent       = numEj++;
-    document.getElementById('bravo').textContent     = '';
+
+    /* Número de ejercicio */
+
+    document.getElementById('num').textContent = numEj++;
+
+
+    /* Limpiar mensajes */
+
+    document.getElementById('bravo').textContent = '';
+
+
+    /* Ocultar botón de nuevo ejercicio */
+
     document.getElementById('btn-sig').style.display = 'none';
 
-    const aMostrar = a ===  1 ? '' : a === -1 ? '−' : `${a}`;
-    const bMostrar = b >= 0 ? `+ ${b}` : `− ${Math.abs(b)}`;
-    const cMostrar = c >= 0 ? `${c}`   : `−${Math.abs(c)}`;
-    const rhs2     = c - b;
-    const xVal     = rhs2 / a;
+
+    /* Mostrar botón para avanzar */
+
+    document.getElementById('btn-avanzar').style.display = 'block';
+
+
+    /* ─────────────────────────
+       FORMATO DE LA ECUACIÓN
+    ───────────────────────── */
+
+    const aMostrar =
+      a === 1
+        ? ''
+        : a === -1
+          ? '−'
+          : `${a}`;
+
+
+    const bMostrar =
+      b >= 0
+        ? `+ ${b}`
+        : `− ${Math.abs(b)}`;
+
+
+    const cMostrar =
+      c >= 0
+        ? `${c}`
+        : `−${Math.abs(c)}`;
+
+
+    const rhs2 = c - b;
+
+    const xVal = rhs2 / a;
+
+
+    /* Mostrar ecuación */
 
     document.getElementById('ecuacion').textContent =
       `${aMostrar}x ${bMostrar} = ${cMostrar}`;
 
-    // Definición de los 4 pasos
+
+    /* ─────────────────────────
+       DEFINICIÓN DE LOS 4 PASOS
+    ───────────────────────── */
+
     window._pasos = [
+
       {
-        izq: `${aMostrar}x`, mid: '=',
-        der: `${c >= 0 ? c : '−' + Math.abs(c)} ${b >= 0 ? '−' : '+'} `,
+        izq: `${aMostrar}x`,
+        mid: '=',
+        der:
+          `${c >= 0 ? c : '−' + Math.abs(c)} ` +
+          `${b >= 0 ? '−' : '+'} `,
+
         respuesta: Math.abs(b),
-        pista1: `Pasás el ${b >= 0 ? '+' : ''}${b} al otro lado`,
-        pista2: `Cambia de signo: queda ${c} ${b >= 0 ? '−' : '+'} ${Math.abs(b)}`
+
+        pista1:
+          `Pasás el ${b >= 0 ? '+' : ''}${b} al otro lado`,
+
+        pista2:
+          `Cambia de signo: queda ${c} ` +
+          `${b >= 0 ? '−' : '+'} ${Math.abs(b)}`
       },
+
+
       {
-        izq: `${aMostrar}x`, mid: '=', der: '',
+        izq: `${aMostrar}x`,
+        mid: '=',
+        der: '',
+
         respuesta: rhs2,
-        pista1: `Resolvés ${c} ${b >= 0 ? '−' : '+'} ${Math.abs(b)}`,
-        pista2: `${c} ${b >= 0 ? '−' : '+'} ${Math.abs(b)} = ${rhs2}`
+
+        pista1:
+          `Resolvés ${c} ` +
+          `${b >= 0 ? '−' : '+'} ${Math.abs(b)}`,
+
+        pista2:
+          `${c} ${b >= 0 ? '−' : '+'} ` +
+          `${Math.abs(b)} = ${rhs2}`
       },
+
+
       {
-        izq: 'x', mid: '=',
+        izq: 'x',
+        mid: '=',
         der: `${rhs2} ÷ `,
+
         respuesta: a,
-        pista1: `Dividís ambos lados por el coeficiente de x`,
-        pista2: `El coeficiente de x es ${a}`
+
+        pista1:
+          `Dividís ambos lados por el coeficiente de x`,
+
+        pista2:
+          `El coeficiente de x es ${a}`
       },
+
+
       {
-        izq: 'x', mid: '=', der: '',
+        izq: 'x',
+        mid: '=',
+        der: '',
+
         respuesta: xVal,
-        pista1: `Calculás ${rhs2} ÷ ${a}`,
-        pista2: `${rhs2} ÷ ${a} = ${xVal}`
+
+        pista1:
+          `Calculás ${rhs2} ÷ ${a}`,
+
+        pista2:
+          `${rhs2} ÷ ${a} = ${xVal}`
       }
+
     ];
 
-    // Construir los pasos en el DOM
-    const cont = document.getElementById('pasos');
+
+    /* ─────────────────────────
+       CONSTRUIR LOS PASOS
+    ───────────────────────── */
+
+    const cont =
+      document.getElementById('pasos');
+
     cont.innerHTML = '';
 
+
     window._pasos.forEach(function(p, i) {
-      const wrap = document.createElement('div');
+
+      const wrap =
+        document.createElement('div');
+
       wrap.className = 'paso-wrap';
 
-      const fila = document.createElement('div');
+
+      const fila =
+        document.createElement('div');
+
       fila.className = 'paso';
 
-      const txt = document.createElement('span');
-      txt.textContent = `${p.izq} ${p.mid} ${p.der}`;
+
+      const txt =
+        document.createElement('span');
+
+      txt.textContent =
+        `${p.izq} ${p.mid} ${p.der}`;
+
+
       fila.appendChild(txt);
 
-    const inp = document.createElement('input');
 
-inp.type        = 'text';
-inp.className   = 'inp';
-inp.id          = 'inp-' + i;
-inp.disabled    = (i !== 0);
-inp.placeholder = '?';
-inp.inputMode   = 'decimal';
-inp.enterKeyHint = i < window._pasos.length - 1 ? 'next' : 'done';
-inp.autocomplete = 'off';
+      /* ─────────────────────
+         INPUT
+      ───────────────────── */
 
-/* Detectar qué input está activo */
-inp.addEventListener('focus', function() {
-  inputActivo = inp;
-});
+      const inp =
+        document.createElement('input');
 
-inp.addEventListener('click', function() {
-  inputActivo = inp;
-});
 
-inp.addEventListener('input', function() {
-  inputActivo = inp;
-});
+      /*
+        TEXT + DECIMAL:
 
-/* ── AVANZAR CON NEXT / DONE ── */
-inp.addEventListener('keydown', function(evento) {
+        Esto es más compatible con iPhone
+        que type="number".
 
-  /* Compatible con teclado físico y Safari/iPhone */
-  if (evento.key !== 'Enter' && evento.keyCode !== 13) return;
+        Seguimos usando parseFloat()
+        para validar los números.
+      */
 
-  evento.preventDefault();
-  evento.stopPropagation();
+      inp.type = 'text';
 
-  if (i !== pasoActual) return;
+      inp.className = 'inp';
 
-  const valor = inp.value.trim();
+      inp.id = 'inp-' + i;
 
-  /* No validar si está vacío o quedó solamente el menos */
-  if (valor === '' || valor === '-') return;
+      inp.disabled = (i !== 0);
 
-  /* Validar el paso */
-  alEscribir(i);
+      inp.placeholder = '?';
 
-  /* Si fue correcto, pasar al siguiente */
-  if (pasoActual < window._pasos.length) {
+      inp.inputMode = 'decimal';
 
-    setTimeout(function() {
+      inp.enterKeyHint =
+        i < window._pasos.length - 1
+          ? 'next'
+          : 'done';
 
-      const siguiente =
-        document.getElementById('inp-' + pasoActual);
+      inp.autocomplete = 'off';
 
-      if (siguiente && !siguiente.disabled) {
-        siguiente.focus();
-        inputActivo = siguiente;
-      }
 
-    }, 100);
-  }
-});
+      /* ─────────────────────
+         INPUT ACTIVO
+      ───────────────────── */
+
+      inp.addEventListener(
+        'focus',
+        function() {
+
+          inputActivo = inp;
+
+        }
+      );
+
+
+      inp.addEventListener(
+        'click',
+        function() {
+
+          inputActivo = inp;
+
+        }
+      );
+
+
+      inp.addEventListener(
+        'input',
+        function() {
+
+          inputActivo = inp;
+
+        }
+      );
+
+
+      /* ─────────────────────
+         ENTER EN PC / SAMSUNG
+      ───────────────────── */
+
+      inp.addEventListener(
+        'keydown',
+        function(evento) {
+
+          if (
+            evento.key !== 'Enter' &&
+            evento.keyCode !== 13
+          ) {
+            return;
+          }
+
+
+          evento.preventDefault();
+
+
+          if (i !== pasoActual) {
+            return;
+          }
+
+
+          const valor =
+            inp.value.trim();
+
+
+          if (
+            valor === '' ||
+            valor === '-'
+          ) {
+            return;
+          }
+
+
+          /*
+            Validamos.
+            Si es correcta, alEscribir()
+            habilita y enfoca el siguiente.
+          */
+
+          alEscribir(i);
+
+        }
+      );
+
+
       fila.appendChild(inp);
 
-      const ico = document.createElement('span');
+
+      /* ─────────────────────
+         ICONO
+      ───────────────────── */
+
+      const ico =
+        document.createElement('span');
+
       ico.className = 'icono';
+
       ico.id = 'ico-' + i;
+
+
       fila.appendChild(ico);
 
-      const pista = document.createElement('div');
-      pista.className = 'pista-inline';
-      pista.id = 'pista-' + i;
+
+      /* ─────────────────────
+         PISTA
+      ───────────────────── */
+
+      const pista =
+        document.createElement('div');
+
+      pista.className =
+        'pista-inline';
+
+      pista.id =
+        'pista-' + i;
+
 
       wrap.appendChild(fila);
+
       wrap.appendChild(pista);
+
       cont.appendChild(wrap);
+
     });
 
-    const primero = document.getElementById('inp-0');
+
+    /* ─────────────────────
+       ACTIVAR PRIMER INPUT
+    ───────────────────── */
+
+    const primero =
+      document.getElementById('inp-0');
+
+
     primero.focus();
+
     inputActivo = primero;
+
   }
 
-  /* ── VALIDACIÓN AUTOMÁTICA AL ESCRIBIR ── */
+
+  /* ─────────────────────────────
+     VALIDACIÓN
+  ───────────────────────────── */
+
   function alEscribir(i) {
-    if (i !== pasoActual) return;
 
-    const inp     = document.getElementById('inp-' + i);
-    const ico     = document.getElementById('ico-' + i);
-    const pistaEl = document.getElementById('pista-' + i);
-    const val     = inp.value.trim();
-
-    inputActivo = inp;
-
-    // Campo vacío: limpiar estado
-    if (val === '') {
-      inp.classList.remove('ok', 'mal');
-      ico.textContent       = '';
-      pistaEl.style.display = 'none';
+    if (i !== pasoActual) {
       return;
     }
 
-    const num      = parseFloat(val);
-    const correcto = window._pasos[i].respuesta;
+
+    const inp =
+      document.getElementById('inp-' + i);
+
+
+    const ico =
+      document.getElementById('ico-' + i);
+
+
+    const pistaEl =
+      document.getElementById('pista-' + i);
+
+
+    const val =
+      inp.value.trim();
+
+
+    inputActivo = inp;
+
+
+    /* Campo vacío */
+
+    if (val === '') {
+
+      inp.classList.remove(
+        'ok',
+        'mal'
+      );
+
+      ico.textContent = '';
+
+      pistaEl.style.display = 'none';
+
+      return;
+
+    }
+
+
+    /* Convertir a número */
+
+    const num =
+      parseFloat(val);
+
+
+    const correcto =
+      window._pasos[i].respuesta;
+
+
+    /* ─────────────────────
+       CORRECTO
+    ───────────────────── */
 
     if (num === correcto) {
-      /* ── CORRECTO ── */
+
       inp.classList.remove('mal');
+
       inp.classList.add('ok');
-      inp.disabled    = true;
+
+      inp.disabled = true;
+
+
       ico.textContent = '✓';
-      ico.className   = 'icono ok';
+
+      ico.className = 'icono ok';
+
+
       pistaEl.style.display = 'none';
-      pistaEl.textContent   = '';
+
+      pistaEl.textContent = '';
+
+
       intentosPaso = 0;
+
       pasoActual++;
 
-      if (pasoActual < window._pasos.length) {
-        // Habilitar el siguiente paso
-        const next = document.getElementById('inp-' + pasoActual);
+
+      /* ─────────────────
+         SIGUIENTE PASO
+      ───────────────── */
+
+      if (
+        pasoActual <
+        window._pasos.length
+      ) {
+
+        const next =
+          document.getElementById(
+            'inp-' + pasoActual
+          );
+
+
         next.disabled = false;
 
-        setTimeout(function() {
-          next.focus();
-          inputActivo = next;
-        }, 50);
+
+        setTimeout(
+          function() {
+
+            next.focus();
+
+            inputActivo = next;
+
+          },
+          50
+        );
+
 
       } else {
-        // Ecuación completa — sumar tick arriba
+
+        /* ─────────────────
+           ECUACIÓN COMPLETA
+        ───────────────── */
+
         okCnt++;
-        document.getElementById('estrellas').textContent = '✓'.repeat(okCnt);
-        document.getElementById('bravo').textContent = okCnt === 1
-          ? '¡Muy bien! Primera ecuación resuelta.'
-          : `¡Excelente! ${okCnt} ecuaciones resueltas.`;
-        document.getElementById('btn-sig').style.display = 'block';
+
+
+        document.getElementById(
+          'estrellas'
+        ).textContent =
+          '✓'.repeat(okCnt);
+
+
+        document.getElementById(
+          'bravo'
+        ).textContent =
+          okCnt === 1
+            ? '¡Muy bien! Primera ecuación resuelta.'
+            : `¡Excelente! ${okCnt} ecuaciones resueltas.`;
+
+
+        /* Ocultar botón de avanzar */
+
+        document.getElementById(
+          'btn-avanzar'
+        ).style.display = 'none';
+
+
+        /* Mostrar siguiente ejercicio */
+
+        document.getElementById(
+          'btn-sig'
+        ).style.display = 'block';
+
       }
 
-    } else {
-      /* ── INCORRECTO — solo pista, sin contar error ── */
+    }
+
+    /* ─────────────────────
+       INCORRECTO
+    ───────────────────── */
+
+    else {
+
       inp.classList.remove('ok');
+
       inp.classList.add('mal');
+
+
       ico.textContent = '✗';
-      ico.className   = 'icono mal';
+
+      ico.className = 'icono mal';
+
+
       intentosPaso++;
 
-      const p = window._pasos[i];
-      pistaEl.textContent   = '💡 ' + (intentosPaso >= 2 ? p.pista2 : p.pista1);
-      pistaEl.style.display = 'block';
+
+      const p =
+        window._pasos[i];
+
+
+      pistaEl.textContent =
+        '💡 ' +
+        (
+          intentosPaso >= 2
+            ? p.pista2
+            : p.pista1
+        );
+
+
+      pistaEl.style.display =
+        'block';
+
     }
+
   }
 
-  /* ── ARRANCAR ── */
+
+  /* ─────────────────────────────
+     ARRANCAR
+  ───────────────────────────── */
+
   nuevo();
+
 </script>
 
 </body>
