@@ -356,9 +356,10 @@ inp.addEventListener('input', function() {
 });
 
 /* ── AVANZAR CON NEXT / DONE ── */
-function avanzarInput(evento) {
+inp.addEventListener('keydown', function(evento) {
 
-  if (evento.key !== 'Enter') return;
+  /* Compatible con teclado físico y Safari/iPhone */
+  if (evento.key !== 'Enter' && evento.keyCode !== 13) return;
 
   evento.preventDefault();
   evento.stopPropagation();
@@ -370,13 +371,13 @@ function avanzarInput(evento) {
   /* No validar si está vacío o quedó solamente el menos */
   if (valor === '' || valor === '-') return;
 
-  /* Validar */
+  /* Validar el paso */
   alEscribir(i);
 
-  /* Si fue correcto, avanzar */
-  setTimeout(function() {
+  /* Si fue correcto, pasar al siguiente */
+  if (pasoActual < window._pasos.length) {
 
-    if (pasoActual < window._pasos.length) {
+    setTimeout(function() {
 
       const siguiente =
         document.getElementById('inp-' + pasoActual);
@@ -386,14 +387,9 @@ function avanzarInput(evento) {
         inputActivo = siguiente;
       }
 
-    }
-
-  }, 80);
-}
-
-/* Funciona con teclado físico y teclado del iPhone */
-inp.addEventListener('keydown', avanzarInput);
-inp.addEventListener('keyup', avanzarInput);
+    }, 100);
+  }
+});
       fila.appendChild(inp);
 
       const ico = document.createElement('span');
