@@ -334,13 +334,8 @@ inp.id          = 'inp-' + i;
 inp.disabled    = (i !== 0);
 inp.placeholder = '?';
 inp.inputMode   = 'decimal';
-
-/* Tecla del teclado del iPhone:
-   NEXT en los primeros pasos y DONE en el último */
-inp.setAttribute(
-  'enterkeyhint',
-  i < window._pasos.length - 1 ? 'next' : 'done'
-);
+inp.enterKeyHint = i < window._pasos.length - 1 ? 'next' : 'done';
+inp.autocomplete = 'off';
 
 /* Detectar qué input está activo */
 inp.addEventListener('focus', function() {
