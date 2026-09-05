@@ -326,60 +326,74 @@
       txt.textContent = `${p.izq} ${p.mid} ${p.der}`;
       fila.appendChild(txt);
 
-      const inp = document.createElement('input');
-      inp.type        = 'number';
-      inp.className   = 'inp';
-      inp.id          = 'inp-' + i;
-      inp.disabled    = (i !== 0);
-      inp.placeholder = '?';
-      inp.inputMode   = 'decimal';
-      inp.enterKeyHint = i < window._pasos.length - 1 ? 'next' : 'done';
+    const inp = document.createElement('input');
 
-      /* Detectar qué input está activo */
-      inp.addEventListener('focus', function() {
-        inputActivo = inp;
-      });
+inp.type        = 'number';
+inp.className   = 'inp';
+inp.id          = 'inp-' + i;
+inp.disabled    = (i !== 0);
+inp.placeholder = '?';
+inp.inputMode   = 'decimal';
 
-      inp.addEventListener('click', function() {
-        inputActivo = inp;
-      });
+/* Tecla del teclado del iPhone:
+   NEXT en los primeros pasos y DONE en el último */
+inp.setAttribute(
+  'enterkeyhint',
+  i < window._pasos.length - 1 ? 'next' : 'done'
+);
 
-    inp.addEventListener('input', function() {
+/* Detectar qué input está activo */
+inp.addEventListener('focus', function() {
   inputActivo = inp;
 });
 
-      /* Enter / OK */
-  inp.addEventListener('keydown', function(evento) {
-
-  if (evento.key === 'Enter') {
-
-    evento.preventDefault();
-
-    if (i !== pasoActual) return;
-
-    const valor = inp.value.trim();
-
-    // Si está vacío, no hacemos nada
-    if (valor === '' || valor === '-') return;
-
-    // Validar
-    alEscribir(i);
-
-    // Si fue correcto, alEscribir habilita el siguiente
-    // y lo enfocamos
-    setTimeout(function() {
-      if (pasoActual < window._pasos.length) {
-        const siguiente =
-          document.getElementById('inp-' + pasoActual);
-
-        if (siguiente && !siguiente.disabled) {
-          siguiente.focus();
-          inputActivo = siguiente;
-        }
-      }
-    }, 50);
-  }
+inp.addEventListener('click', function() {
+  inputActivo = inp;
 });
+
+inp.addEventListener('input', function() {
+  inputActivo = inp;
+});
+
+/* ── AVANZAR CON NEXT / DONE ── */
+function avanzarInput(evento) {
+
+  if (evento.key !== 'Enter') return;
+
+  evento.preventDefault();
+  evento.stopPropagation();
+
+  if (i !== pasoActual) return;
+
+  const valor = inp.value.trim();
+
+  /* No validar si está vacío o quedó solamente el menos */
+  if (valor === '' || valor === '-') return;
+
+  /* Validar */
+  alEscribir(i);
+
+  /* Si fue correcto, avanzar */
+  setTimeout(function() {
+
+    if (pasoActual < window._pasos.length) {
+
+      const siguiente =
+        document.getElementById('inp-' + pasoActual);
+
+      if (siguiente && !siguiente.disabled) {
+        siguiente.focus();
+        inputActivo = siguiente;
+      }
+
+    }
+
+  }, 80);
+}
+
+/* Funciona con teclado físico y teclado del iPhone */
+inp.addEventListener('keydown', avanzarInput);
+inp.addEventListener('keyup', avanzarInput);
       fila.appendChild(inp);
 
       const ico = document.createElement('span');
