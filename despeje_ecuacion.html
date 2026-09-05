@@ -138,6 +138,29 @@
       display: none;
     }
 
+    /* ── BOTÓN MENOS ── */
+    .btn-menos {
+      display: block;
+      margin: 8px auto 0;
+      width: 58px;
+      height: 38px;
+      font-size: 22px;
+      font-weight: bold;
+      color: #555;
+      background: #f0f0f0;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      cursor: pointer;
+    }
+
+    .btn-menos:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-menos:active {
+      background: #d5d5d5;
+    }
+    
     /* ── MENSAJE FINAL ── */
     .bravo {
       text-align: center;
@@ -184,6 +207,16 @@
   <!-- PASOS (se generan con JS) -->
   <div id="pasos"></div>
 
+  <!-- BOTÓN MENOS -->
+  <button
+    type="button"
+    class="btn-menos"
+    id="btn-menos"
+    onclick="ponerMenos()"
+  >
+    −
+  </button>
+
   <!-- FINAL -->
   <div class="bravo" id="bravo"></div>
   <button class="btn-siguiente" id="btn-sig" onclick="nuevo()">Siguiente ejercicio</button>
@@ -202,6 +235,27 @@
     return Math.floor(Math.random() * (max - min + 1)) + min;
   }
 
+  /* ── INPUT ACTUAL ── */
+  let inputActivo = null;
+
+  /* ── PONER / QUITAR SIGNO MENOS ── */
+  function ponerMenos() {
+
+    const inp = inputActivo;
+
+    if (!inp || inp.disabled) return;
+
+    let valor = inp.value;
+
+    if (valor.startsWith('-')) {
+      inp.value = valor.substring(1);
+    } else {
+      inp.value = '-' + valor;
+    }
+
+    inp.focus();
+  }
+
   /* ── GENERAR NUEVO EJERCICIO ── */
   function nuevo() {
     // Genera a, b, c con solución entera y a ≠ 0
@@ -213,6 +267,7 @@
 
     pasoActual   = 0;
     intentosPaso = 0;
+    inputActivo  = null;
 
     document.getElementById('num').textContent       = numEj++;
     document.getElementById('bravo').textContent     = '';
@@ -278,24 +333,72 @@
       inp.id          = 'inp-' + i;
       inp.disabled    = (i !== 0);
       inp.placeholder = '?';
-      inp.addEventListener('input', function() { alEscribir(i); });
+      inp.inputMode   = 'decimal';
+      inp.enterKeyHint = i < window._pasos.length - 1 ? 'next' : 'done';
+
+      /* Detectar qué input está activo */
+      inp.addEventListener('focus', function() {
+        inputActivo = inp;
+      });
+
+      inp.addEventListener('click', function() {
+        inputActivo = inp;
+      });
+
+      inp.addEventListener('input', function() {
+        inputActivo = inp;
+        alEscribir(i);
+      });
+
+      /* Enter / OK */
+      inp.addEventListener('keydown', function(evento) {
+
+        if (evento.key === 'Enter') {
+
+          evento.preventDefault();
+
+          if (i === pasoActual) {
+
+            const valor = inp.value.trim();
+
+            if (valor !== '') {
+              alEscribir(i);
+            }
+
+            /* Si el paso quedó correcto, alEscribir
+               ya habilita el siguiente input */
+            if (pasoActual < window._pasos.length) {
+
+              const siguiente =
+                document.getElementById('inp-' + pasoActual);
+
+              if (siguiente && !siguiente.disabled) {
+                siguiente.focus();
+              }
+            }
+          }
+        }
+      });
+
       fila.appendChild(inp);
 
       const ico = document.createElement('span');
       ico.className = 'icono';
-      ico.id        = 'ico-' + i;
+      ico.id = 'ico-' + i;
       fila.appendChild(ico);
 
       const pista = document.createElement('div');
       pista.className = 'pista-inline';
-      pista.id        = 'pista-' + i;
+      pista.id = 'pista-' + i;
 
       wrap.appendChild(fila);
       wrap.appendChild(pista);
       cont.appendChild(wrap);
     });
 
-    document.getElementById('inp-0').focus();
+    const primero = document.getElementById('inp-0');
+    primero.focus();
+    inputActivo = primero;
   }
 
   /* ── VALIDACIÓN AUTOMÁTICA AL ESCRIBIR ── */
@@ -306,6 +409,8 @@
     const ico     = document.getElementById('ico-' + i);
     const pistaEl = document.getElementById('pista-' + i);
     const val     = inp.value.trim();
+
+    inputActivo = inp;
 
     // Campo vacío: limpiar estado
     if (val === '') {
@@ -334,7 +439,12 @@
         // Habilitar el siguiente paso
         const next = document.getElementById('inp-' + pasoActual);
         next.disabled = false;
-        setTimeout(function() { next.focus(); }, 50);
+
+        setTimeout(function() {
+          next.focus();
+          inputActivo = next;
+        }, 50);
+
       } else {
         // Ecuación completa — sumar tick arriba
         okCnt++;
